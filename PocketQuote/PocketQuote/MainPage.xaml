@@ -2,10 +2,21 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:PocketQuote"
-             x:Class="PocketQuote.MainPage">
-
-  <Label Text="Welcome to Xamarin Forms!"
-           VerticalOptions="Center"
-           HorizontalOptions="Center" />
-
+             x:Class="PocketQuote.MainPage" Title="Список авторов">
+  <StackLayout>
+    <ListView x:Name="writersList" ItemsSource="{Binding}" ItemSelected="OnItemSelected">
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <ViewCell>
+            <ViewCell.View>
+              <StackLayout Orientation="Horizontal">
+                <Label Text="{Binding Name}" FontSize="Medium" />
+              </StackLayout>
+            </ViewCell.View>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
+    <Button Text="Добавить" Clicked="CreateWriter" />
+  </StackLayout>
 </ContentPage>

@@ -9,11 +9,23 @@ namespace PocketQuote
 {
     public partial class App : Application
     {
+        public const string DATABASE_NAME = "QuotesDB.db";
+        public static WriterRepository database;
+        public static WriterRepository Database
+        {
+            get
+            {
+                if (database == null)
+                {
+                    database = new WriterRepository(DATABASE_NAME);
+                }
+                return database;
+            }
+        }
         public App()
         {
             InitializeComponent();
-
-            MainPage = new PocketQuote.MainPage();
+            MainPage = new NavigationPage(new PocketQuote.MainPage());
         }
 
         protected override void OnStart()
