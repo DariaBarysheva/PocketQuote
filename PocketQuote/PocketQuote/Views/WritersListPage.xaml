@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:PocketQuote"
-             x:Class="PocketQuote.MainPage" Title="Список авторов">
+             x:Class="PocketQuote.Views.WritersListPage" Title="Список авторов">
   <StackLayout>
-    <ListView x:Name="writersList" ItemsSource="{Binding}" ItemSelected="OnItemSelected">
+    <ListView x:Name="writersList" ItemsSource="{Binding Writers}" 
+              SelectedItem="{Binding SelectedWriter, Mode=TwoWay}" HasUnevenRows="True">
       <ListView.ItemTemplate>
         <DataTemplate>
           <ViewCell>
@@ -17,8 +17,6 @@
         </DataTemplate>
       </ListView.ItemTemplate>
     </ListView>
-    <Button Text="Добавить" Clicked="CreateWriter" />
+    <Button Text="Добавить" Command="{Binding CreateWriterCommand}" />
   </StackLayout>
-  
-  
 </ContentPage>

@@ -18,7 +18,7 @@ namespace PocketQuote.Droid
 
             string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
             var path = Path.Combine(documentsPath, sqliteFilename);
-            //Копирование файла из папки Assets по пути path
+            //Копирование файла из папки Assets по пути path (при первом запуске приложения, когда база еще не создана)
             if (!File.Exists(path))
             {
                 var dbAssetStream = Forms.Context.Assets.Open(sqliteFilename);

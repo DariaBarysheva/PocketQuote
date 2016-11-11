@@ -12,8 +12,11 @@ namespace PocketQuote
         public MainPage()
         {
             InitializeComponent();
+
         }
 
+        #region Использовалось ранее
+        /*
         //Первоначальная загрузка списка авторов при открытии страницы
         protected override void OnAppearing()
         {
@@ -38,5 +41,7 @@ namespace PocketQuote
             writerPage.BindingContext = newWriter;
             await Navigation.PushAsync(writerPage);
         }
+        */
+        #endregion
     }
 }

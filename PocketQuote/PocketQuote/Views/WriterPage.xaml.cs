@@ -1,15 +1,21 @@
-﻿using System;
+﻿using PocketQuote.ViewModels;
 using Xamarin.Forms;
- 
-namespace PocketQuote
+
+namespace PocketQuote.Views
 {
+    //Файл отделенного кода для WriterPage.xaml. Устанавливаем контекст для формы с данными об одном авторе.
     public partial class WriterPage : ContentPage
     {
-        public WriterPage()
+        public WriterViewModel ViewModel { get; private set; }
+        public WriterPage(WriterViewModel vm)
         {
             InitializeComponent();
+            ViewModel = vm;
+            this.BindingContext = ViewModel;
         }
 
+        #region Использовалось ранее
+        /*
         //Обработка нажатия кнопки "Добавить"
         private void SaveWriter(object sender, EventArgs e)
         {
@@ -34,5 +40,7 @@ namespace PocketQuote
         {
             this.Navigation.PopAsync();
         }
+        */
+        #endregion
     }
 }

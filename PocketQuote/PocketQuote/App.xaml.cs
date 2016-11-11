@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿using PocketQuote.Views;
 using Xamarin.Forms;
 
 namespace PocketQuote
 {
     public partial class App : Application
     {
-        public const string DATABASE_NAME = "QuotesDB.db";
-        public static WriterRepository database;
+        //База данных SQLite, с которой будет соединяться приложение. Создана в DB Browser for SQLite.
+        //Добавлена в папку Assets в проекте PocketQuote.Droid. При первом заходе в приложение копируется на смартфон, при последующих - читается в нем.
+        public const string DATABASE_NAME = "QuotesDB.db"; 
+        /*public static WriterRepository database;
         public static WriterRepository Database
         {
             get
@@ -21,11 +19,13 @@ namespace PocketQuote
                 }
                 return database;
             }
-        }
+        }*/
+
         public App()
         {
             InitializeComponent();
-            MainPage = new NavigationPage(new PocketQuote.MainPage());
+            /*MainPage = new NavigationPage(new PocketQuote.MainPage());*/
+            MainPage = new NavigationPage(new WritersListPage());
         }
 
         protected override void OnStart()

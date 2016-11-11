@@ -11,7 +11,7 @@ namespace PocketQuote.iOS
         public SQLite_iOS() { }
         public string GetDatabasePath(string sqliteFilename)
         {
-            //Определяем путь к бд
+            //Определяем путь к бд. При первом запуске приложения (когда база еще не создана - копируем базу из ресурсов проекта)
             string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
             string libraryPath = Path.Combine(documentsPath, "..", "Library"); //Папка библиотеки
             var path = Path.Combine(libraryPath, sqliteFilename);
