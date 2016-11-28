@@ -201,7 +201,7 @@ namespace PocketQuote.ViewModels
         //сортировка списка авторов по ФИО (после добавления и изменения отдельных записей)
         private void SortWriters()
         {
-            Writers = new ObservableCollection<WriterViewModel>(Writers.OrderBy(w => w.Writer.Name));
+            Writers = new ObservableCollection<WriterViewModel>(Writers.OrderBy(w => w.Name));
             OnPropertyChanged("Writers");
         }
 
