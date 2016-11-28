@@ -2,23 +2,20 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:PocketQuote"
-             x:Class="PocketQuote.MainPage" Title="Список авторов">
+             x:Class="PocketQuote.MainPage" Title="Выберите нужный раздел">
   <StackLayout>
-    <ListView x:Name="writersList" ItemsSource="{Binding}" ItemSelected="OnItemSelected">
+    <ListView x:Name ="chooseList" ItemsSource ="{Binding ChooseList}" ItemSelected="OnItemSelected">
       <ListView.ItemTemplate>
         <DataTemplate>
           <ViewCell>
             <ViewCell.View>
               <StackLayout Orientation="Horizontal">
-                <Label Text="{Binding Name}" FontSize="Medium" />
+                <Label Text="{Binding}" FontSize="Medium" />
               </StackLayout>
             </ViewCell.View>
           </ViewCell>
         </DataTemplate>
       </ListView.ItemTemplate>
     </ListView>
-    <Button Text="Добавить" Clicked="CreateWriter" />
-  </StackLayout>
-  
-  
+  </StackLayout>  
 </ContentPage>

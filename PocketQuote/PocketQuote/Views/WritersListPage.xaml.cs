@@ -1,5 +1,6 @@
 ﻿using Xamarin.Forms;
 using PocketQuote.ViewModels;
+using PocketQuote.Views;
 
 namespace PocketQuote.Views
 {

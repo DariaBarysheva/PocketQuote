@@ -20,7 +20,7 @@ namespace PocketQuote.ViewModels
 
         //Ссылка на объект модели "Автор" (Writer). Передается классом WritersListViewModel при создании объекта текущего класса 
         //(если в списке авторов выбрана запись для редактирования или удаления, иначе передается null - и Writer создается уже в данном классе).
-        public Writer Writer { get; private set; }
+        public Writer Writer { get; set; }
 
         //Имя автора - соответствует имени модели "Автор"
         public string Name
@@ -44,18 +44,18 @@ namespace PocketQuote.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public WriterViewModel(Writer tempWriter)
+        public WriterViewModel(/*Writer tempWriter*/)
         {
-            if (tempWriter == null) //Добавление нового автора
+            /*if (tempWriter == null) //Добавление нового автора
             {
                 Writer = new Writer();
             }
             else //Редактирование или удаление автора
             {
                 Writer = tempWriter;
-            }
+            }*/
 
-            //Writer = new Writer();
+            Writer = new Writer();
         }       
 
         protected void OnPropertyChanged(string propName)

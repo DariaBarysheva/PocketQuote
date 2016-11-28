@@ -24,8 +24,8 @@ namespace PocketQuote
         public App()
         {
             InitializeComponent();
-            /*MainPage = new NavigationPage(new PocketQuote.MainPage());*/
-            MainPage = new NavigationPage(new WritersListPage());
+            MainPage = new NavigationPage(new PocketQuote.MainPage());
+            //MainPage = new NavigationPage(new WritersListPage());
         }
 
         protected override void OnStart()
