@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:PocketQuote"
              x:Class="PocketQuote.MainPage" Title="Выберите нужный раздел">
   <StackLayout>
-    <ListView x:Name ="chooseList" ItemsSource ="{Binding ChooseList}" ItemSelected="OnItemSelected">
+    <ListView x:Name ="chooseList" ItemsSource ="{Binding ChooseList}" SelectedItem="{Binding CurSelectedItem, Mode=TwoWay}">
       <ListView.ItemTemplate>
         <DataTemplate>
           <ViewCell>

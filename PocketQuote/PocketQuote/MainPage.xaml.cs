@@ -19,15 +19,42 @@ namespace PocketQuote
             this.BindingContext = this;
         }
 
-        public void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
-        {
-            switch(e.SelectedItem.ToString())
+        public string curSelectedItem;
+        public string CurSelectedItem {
+            get { return curSelectedItem; }
+            set
             {
-                case "Авторы":
-                    Navigation.PushAsync(new NavigationPage(new WritersListPage()));
-                    break;
+                if (value != null)
+                {
+                    curSelectedItem = null;
+                    OnPropertyChanged("CurSelectedItem");
+
+                    switch (value)
+                    {
+                        case "Авторы":
+                            Navigation.PushAsync(new WritersListPage());
+                            break;
+                    }
+                }
             }
         }
+
+        /*public void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            SelectProc(sender, e);
+        }
+      
+        private async void SelectProc(object sender, SelectedItemChangedEventArgs e)
+        {
+
+            switch (e.SelectedItem.ToString())
+            {
+                case "Авторы":
+                    await Navigation.PushAsync(new WritersListPage());
+                    break;
+            }
+            CurSelectedItem = null;
+        }*/
 
         #region Использовалось ранее
         /*
