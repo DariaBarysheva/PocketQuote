@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -63,8 +64,16 @@ namespace PocketQuote.ViewModels
 
     public class WritersListViewModel : INotifyPropertyChanged
     {
+        //реализация интерфейса INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propName));
+        }
+
         //Соединение с БД
-        private SQLiteConnection database;
+        private SQLiteConnection databaseConnection;
 
         //Список авторов
         public ObservableCollection<WriterViewModel> Writers { get; set; }
@@ -76,12 +85,14 @@ namespace PocketQuote.ViewModels
             get { return selectedWriter; }
             set
             {
-                if (value != null)
+                if (value != null) //нужна проверка - чтобы не выйти на ошибку, когда список пуст
                 {
                     //Writer tempWriter = new Writer() { Id = value.Id, Name = value.Name };
                     WriterViewModel tempWriter = new WriterViewModel() { Writer = new Writer() { Id = value.Writer.Id, Name = value.Writer.Name }, ListViewModel = this };
-                    selectedWriter = null;
+                    selectedWriter = null; //чтобы элемент в исходном списке можно было сразу снова выбрать без перехода на другой элемент
                     OnPropertyChanged("SelectedWriter");
+
+                    //открываем страницу с данными об одном авторе
                     Navigation.PushAsync(new WriterPage(tempWriter /*new WriterViewModel(tempWriter) { ListViewModel = this })*/));
                 }
             }
@@ -97,14 +108,12 @@ namespace PocketQuote.ViewModels
         //объекта WritersListViewModel из WritersListPage)
         public INavigation Navigation { get; set; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public WritersListViewModel()
         {
             //Устанавливаем соединение с БД - в звисимости от платформы путь будет отличаться, поэтому используем DependencyService
             string databasePath = DependencyService.Get<ISQLite>().GetDatabasePath(App.DATABASE_NAME);
-            database = new SQLiteConnection(databasePath);
-            database.CreateTable<Writer>();
+            databaseConnection = new SQLiteConnection(databasePath);
+            databaseConnection.CreateTable<Writer>();
 
             //Загружаем содержимое списка авторов на форме
             UpdateWriters();
@@ -115,29 +124,17 @@ namespace PocketQuote.ViewModels
             BackCommand = new Command(Back);
         }
 
-        protected void OnPropertyChanged(string propName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propName));
-        }
-
-        //Обновление списка авторов на форме - грузим таблицу с БД
+        //Обновление списка авторов на форме - грузим таблицу с БД, упорядочиваем авторов по имени
         private void UpdateWriters()
         {
             Writers = new ObservableCollection<WriterViewModel>();
-            foreach (Writer w in database.Table<Writer>())
+            foreach (Writer w in databaseConnection.Table<Writer>().OrderBy(el => el.Name))
             {
                 WriterViewModel temp = new WriterViewModel() { Writer = w, ListViewModel = this};
                 Writers.Add(temp);
             }
         }         
-
-        //Возврат на предыдущую страницу
-        private void Back()
-        {
-            Navigation.PopAsync();
-        }
-
+       
         //Добавление автора после нажатия кнопки "Добавить" на форме WritersListPage
         private void CreateWriter()
         {
@@ -153,22 +150,25 @@ namespace PocketQuote.ViewModels
             {
                 if (writer.Writer.Id != 0)
                 {
-                    if (database.Update(writer.Writer) == 1) //Если обновили в БД - обновляем элемент в списке
-                    { 
-                        WriterViewModel updatedWriter = (from w in Writers
+                    if (databaseConnection.Update(writer.Writer) == 1) //Если обновили в БД - обновляем элемент в списке
+                    {
+                        WriterViewModel updatedWriter = Writers.FirstOrDefault(w => w.Writer.Id == writer.Writer.Id);
+                                                        /*(from w in Writers
                                                         where w.Writer.Id == writer.Writer.Id
-                                                        select w).First();
+                                                        select w).First();*/
                         if (updatedWriter != null)
                         {
                             updatedWriter.Name = writer.Name;
+                            SortWriters();
                         }
                     }
                 }
                 else
                 {
-                    if (database.Insert(writer.Writer) == 1) //Если добавили в БД - добавляем элемент в список
+                    if (databaseConnection.Insert(writer.Writer) == 1) //Если добавили в БД - добавляем элемент в список
                     {
                         Writers.Add(writer);
+                        SortWriters();
                     }
                 }
             }
@@ -183,11 +183,11 @@ namespace PocketQuote.ViewModels
             WriterViewModel writer = writerObject as WriterViewModel;
             if (writer != null)
             {
-                if (database.Delete<Writer>(writer.Writer.Id) == 1) //Если удалили в БД - удаляем в списке
+                if (databaseConnection.Delete<Writer>(writer.Writer.Id) == 1) //Если удалили в БД - удаляем в списке
                 {
-                    WriterViewModel deletedWriter = (from w in Writers
+                    WriterViewModel deletedWriter = Writers.FirstOrDefault(w => w.Writer.Id == writer.Writer.Id); /*(from w in Writers
                                                      where w.Writer.Id == writer.Writer.Id
-                                                     select w).First();
+                                                     select w).First();*/
                     if (deletedWriter != null)
                     {
                         Writers.Remove(deletedWriter);
@@ -196,6 +196,19 @@ namespace PocketQuote.ViewModels
             }
             //UpdateWriters(); //Обновляем список на форме - пока так
             Back(); //Возврат на исходную страницу            
+        }
+
+        //сортировка списка авторов по ФИО (после добавления и изменения отдельных записей)
+        private void SortWriters()
+        {
+            Writers = new ObservableCollection<WriterViewModel>(Writers.OrderBy(w => w.Writer.Name));
+            OnPropertyChanged("Writers");
+        }
+
+        //Возврат на предыдущую страницу
+        private void Back()
+        {
+            Navigation.PopAsync();
         }
     }
 }
