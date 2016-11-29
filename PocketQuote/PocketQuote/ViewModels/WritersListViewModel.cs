@@ -64,14 +64,6 @@ namespace PocketQuote.ViewModels
 
     public class WritersListViewModel : INotifyPropertyChanged
     {
-        //реализация интерфейса INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propName));
-        }
-
         //Соединение с БД
         private SQLiteConnection databaseConnection;
 
@@ -122,6 +114,14 @@ namespace PocketQuote.ViewModels
             DeleteWriterCommand = new Command(DeleteWriter);
             SaveWriterCommand = new Command(SaveWriter);
             BackCommand = new Command(Back);
+        }
+
+        //реализация интерфейса INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propName));
         }
 
         //Обновление списка авторов на форме - грузим таблицу с БД, упорядочиваем авторов по имени
@@ -183,19 +183,19 @@ namespace PocketQuote.ViewModels
             WriterViewModel writer = writerObject as WriterViewModel;
             if (writer != null)
             {
-                if (databaseConnection.Delete<Writer>(writer.Writer.Id) == 1) //Если удалили в БД - удаляем в списке
-                {
-                    WriterViewModel deletedWriter = Writers.FirstOrDefault(w => w.Writer.Id == writer.Writer.Id); /*(from w in Writers
+                    if (databaseConnection.Delete<Writer>(writer.Writer.Id) == 1) //Если удалили в БД - удаляем в списке
+                    {
+                        WriterViewModel deletedWriter = Writers.FirstOrDefault(w => w.Writer.Id == writer.Writer.Id); /*(from w in Writers
                                                      where w.Writer.Id == writer.Writer.Id
                                                      select w).First();*/
-                    if (deletedWriter != null)
-                    {
-                        Writers.Remove(deletedWriter);
+                        if (deletedWriter != null)
+                        {
+                            Writers.Remove(deletedWriter);
+                        }
                     }
-                }
-            }
-            //UpdateWriters(); //Обновляем список на форме - пока так
-            Back(); //Возврат на исходную страницу            
+             }
+             //UpdateWriters(); //Обновляем список на форме - пока так
+             Back(); //Возврат на исходную страницу                      
         }
 
         //сортировка списка авторов по ФИО (после добавления и изменения отдельных записей)

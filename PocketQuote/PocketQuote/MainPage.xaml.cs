@@ -34,6 +34,9 @@ namespace PocketQuote
                         case "Авторы":
                             Navigation.PushAsync(new WritersListPage());
                             break;
+                        case "Книги":
+                            Navigation.PushAsync(new BooksListPage());
+                            break;
                     }
                 }
             }

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"   
+             xmlns:p1="http://schemas.android.com/apk/res/android"
+             x:Class="PocketQuote.Views.BookPage" Title="Информация о книге">
+  <StackLayout>
+    <Label Text="ФИО автора" />
+    <Entry Text="{Binding Writer_id}" />
+    <Label Text="Название книги" />
+    <Entry Text="{Binding Name}" />
+    <StackLayout Orientation="Horizontal">
+      <Button Text="Сохранить" Command="{Binding ListViewModel.SaveBookCommand}" CommandParameter="{Binding}" />
+      <Button Text="Удалить" Command="{Binding ListViewModel.DeleteBookCommand}" CommandParameter="{Binding}" />
+      <Button Text="Отмена" Command="{Binding Path=ListViewModel.BackCommand}" />
+    </StackLayout>
+  </StackLayout>
+</ContentPage>
