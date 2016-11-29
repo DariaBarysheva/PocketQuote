@@ -4,13 +4,21 @@
              x:Class="PocketQuote.Views.BooksListPage" Title="Список книг">
   <StackLayout>
     <ListView x:Name="booksList" ItemsSource="{Binding Books}"
-              SelectedItem="{Binding SelectedBook, Mode=TwoWay}" HasUnevenRows="True">
+              SelectedItem="{Binding SelectedBook, Mode=TwoWay}" HasUnevenRows="True" IsGroupingEnabled="True">
+      <ListView.GroupHeaderTemplate>
+        <DataTemplate>
+          <ViewCell Height="30">
+            <StackLayout>
+              <Label Text="{Binding KeyName}" FontSize="Large" />
+            </StackLayout>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.GroupHeaderTemplate>
       <ListView.ItemTemplate>
         <DataTemplate>
           <ViewCell>
             <ViewCell.View>
               <StackLayout Orientation="Horizontal">
-                <Label Text="{Binding Writer_name}" FontSize="Medium" />
                 <Label Text="{Binding Name}" FontSize="Medium" />
               </StackLayout>
             </ViewCell.View>

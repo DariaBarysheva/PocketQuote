@@ -19,8 +19,10 @@ namespace PocketQuote.ViewModels
         //Соединение с БД
         private SQLiteConnection databaseConnection;
 
-        //Список авторов
-        public ObservableCollection<BookViewModel> Books { get; set; }
+        //Список книг
+        ObservableCollection<BookViewModel> tempBooks { get; set; }
+        //Список книг с группировкой по автору
+        public ObservableCollection<Grouping<int, BookViewModel>> Books { get; set; }
 
         //Выбранная книга
         private BookViewModel selectedBook;
@@ -79,7 +81,7 @@ namespace PocketQuote.ViewModels
         //Обновление списка книг на форме - грузим таблицу с БД, упорядочиваем книг по имени автора и названию
         private void UpdateBooks()
         {
-            Books = new ObservableCollection<BookViewModel>();
+            tempBooks = new ObservableCollection<BookViewModel>();
 
             /* Сейчас JOIN в LINQ для SqlLite не поддерживается
              * var result = (from b in databaseConnection.Table<Book>()
@@ -89,8 +91,11 @@ namespace PocketQuote.ViewModels
             foreach (Book b in databaseConnection.Query<Book>("SELECT Books.Id, Books.Name, Books.Writer_id, Writers.Name AS 'Writer_name' FROM Books INNER JOIN Writers ON Writers.id = Books.Writer_id"))
             {
                 BookViewModel temp = new BookViewModel() { Book = b, ListViewModel = this };
-                Books.Add(temp);
+                tempBooks.Add(temp);
             }
+
+            var groups = tempBooks.OrderBy(b => b.Writer_name).ThenBy(b => b.Name).GroupBy(b => b.Writer_id).Select(g => new Grouping<int, BookViewModel>(g.Key, g, g.ToList()[0].Book.Writer_name));
+            Books = new ObservableCollection<Grouping<int, BookViewModel>>(groups);
         }
 
         //Добавление книги после нажатия кнопки "Добавить" на форме BooksListPage
@@ -110,7 +115,8 @@ namespace PocketQuote.ViewModels
                 {
                     if (databaseConnection.Update(book.Book) == 1) //Если обновили в БД - обновляем элемент в списке
                     {
-                        BookViewModel updatedBook = Books.FirstOrDefault(b => b.Book.Id == book.Book.Id);                        
+                        BookViewModel updatedBook = null;
+                        updatedBook = tempBooks.FirstOrDefault(b => b.Book.Id == book.Book.Id);                  
                         if (updatedBook != null)
                         {
                             updatedBook.Name = book.Name;
@@ -122,7 +128,7 @@ namespace PocketQuote.ViewModels
                 {
                     if (databaseConnection.Insert(book.Book) == 1) //Если добавили в БД - добавляем элемент в список
                     {
-                        Books.Add(book);
+                        tempBooks.Add(book);
                         SortBooks();
                     }
                 }
@@ -139,10 +145,11 @@ namespace PocketQuote.ViewModels
             {
                 if (databaseConnection.Delete<Book>(book.Book.Id) == 1) //Если удалили в БД - удаляем в списке
                 {
-                    BookViewModel deletedBook = Books.FirstOrDefault(b => b.Book.Id == book.Book.Id);
+                    BookViewModel deletedBook = tempBooks.FirstOrDefault(b => b.Book.Id == book.Book.Id);
                     if (deletedBook != null)
                     {
-                        Books.Remove(deletedBook);
+                        tempBooks.Remove(deletedBook);
+                        SortBooks();
                     }
                 }
             }
@@ -152,7 +159,11 @@ namespace PocketQuote.ViewModels
         //сортировка списка книг по ФИО автора и названию книги (после добавления и изменения отдельных записей)
         private void SortBooks()
         {
-            Books = new ObservableCollection<BookViewModel>(Books.OrderBy(b => b.Writer_name).ThenBy(b => b.Name));
+            /*Books = new ObservableCollection<BookViewModel>(Books.OrderBy(b => b.Writer_name).ThenBy(b => b.Name));
+            OnPropertyChanged("Books");*/
+
+            var groups = tempBooks.OrderBy(b => b.Writer_name).ThenBy(b => b.Name).GroupBy(b => b.Writer_id).Select(g => new Grouping<int, BookViewModel>(g.Key, g, g.ToList()[0].Book.Writer_name));
+            Books = new ObservableCollection<Grouping<int, BookViewModel>>(groups);
             OnPropertyChanged("Books");
         }
 

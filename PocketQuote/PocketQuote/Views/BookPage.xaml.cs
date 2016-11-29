@@ -2,6 +2,7 @@
 using Xamarin.Forms;
 
 
+
 namespace PocketQuote.Views
 {
     //Файл отделенного кода для BookPage.xaml. Устанавливаем контекст для формы с данными об одной книге.
