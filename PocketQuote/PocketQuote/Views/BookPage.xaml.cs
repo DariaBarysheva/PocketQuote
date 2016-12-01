@@ -1,6 +1,7 @@
-﻿using PocketQuote.ViewModels;
+﻿using System;
+using PocketQuote.ViewModels;
 using Xamarin.Forms;
-
+using PocketQuote.Models;
 
 
 namespace PocketQuote.Views
@@ -14,6 +15,20 @@ namespace PocketQuote.Views
             InitializeComponent();
             ViewModel = bm;
             this.BindingContext = ViewModel;
-        }    
+            foreach (Writer w in ViewModel.WritersList)
+            {
+                wPicker.Items.Add(w.Name);
+            }
+            if(ViewModel.Writer_name != null)
+            {
+                wPicker.SelectedIndex = wPicker.Items.IndexOf(ViewModel.Writer_name);
+            }
+        }
+
+        public void wPicker_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ViewModel.Writer_id = ViewModel.WritersList[wPicker.SelectedIndex].Id;
+            ViewModel.Writer_name = ViewModel.WritersList[wPicker.SelectedIndex].Name;
+        }
     }
 }

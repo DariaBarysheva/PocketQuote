@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using PocketQuote.Models;
 
 namespace PocketQuote.ViewModels
@@ -17,6 +18,8 @@ namespace PocketQuote.ViewModels
                 OnPropertyChanged("ListViewModel");
             }
         }
+
+        public List<Writer> WritersList { get; set; }
 
         //Ссылка на объект модели "Книга" (Book). 
         public Book Book { get; set; }

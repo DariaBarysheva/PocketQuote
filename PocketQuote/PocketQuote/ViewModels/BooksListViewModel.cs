@@ -24,6 +24,9 @@ namespace PocketQuote.ViewModels
         //Список книг с группировкой по автору
         public ObservableCollection<Grouping<int, BookViewModel>> Books { get; set; }
 
+        //список авторов для передачи на форму ввода одной книги
+        public List<Writer> listWriters { get; set; }
+
         //Выбранная книга
         private BookViewModel selectedBook;
         public BookViewModel SelectedBook
@@ -33,7 +36,7 @@ namespace PocketQuote.ViewModels
             {
                 if (value != null) //нужна проверка - чтобы не выйти на ошибку, когда список пуст
                 {
-                    BookViewModel tempBook = new BookViewModel() { Book = new Book() { Id = value.Book.Id, Name = value.Book.Name, Writer_id = value.Book.Writer_id, Writer_name = value.Book.Writer_name }, ListViewModel = this };
+                    BookViewModel tempBook = new BookViewModel() { Book = new Book() { Id = value.Book.Id, Name = value.Book.Name, Writer_id = value.Book.Writer_id, Writer_name = value.Book.Writer_name }, ListViewModel = this, WritersList = listWriters };
                     selectedBook = null; //чтобы элемент в исходном списке можно было сразу снова выбрать без перехода на другой элемент
                     OnPropertyChanged("SelectedBook");
 
@@ -63,6 +66,9 @@ namespace PocketQuote.ViewModels
 
             //Загружаем содержимое списка книг на форме
             UpdateBooks();
+
+            //Получаем авторов
+            GetAllWriters();
 
             CreateBookCommand = new Command(CreateBook);
             DeleteBookCommand = new Command(DeleteBook);
@@ -102,10 +108,23 @@ namespace PocketQuote.ViewModels
            // UserDialogs.Instance.HideLoading();
         }
 
+        //Получение списка авторов дл передачи на форму книги
+        private void GetAllWriters()
+        {
+            listWriters = new List<Writer>();
+            var result = (from w in databaseConnection.Table<Writer>()
+                          select w).OrderBy(el => el.Name);
+
+            foreach(Writer w in result)
+            {
+                listWriters.Add(w);
+            }
+        }
+
         //Добавление книги после нажатия кнопки "Добавить" на форме BooksListPage
         private void CreateBook()
         {
-            Navigation.PushAsync(new BookPage(new BookViewModel() { ListViewModel = this }));
+            Navigation.PushAsync(new BookPage(new BookViewModel() { ListViewModel = this, WritersList = listWriters }));
         }
 
         //Сохранение изменений в информации о книге - после выбора книги в списке на форме BooksListPage, 
@@ -124,6 +143,8 @@ namespace PocketQuote.ViewModels
                         if (updatedBook != null)
                         {
                             updatedBook.Name = book.Name;
+                            updatedBook.Writer_id = book.Writer_id;
+                            updatedBook.Writer_name = book.Writer_name;
                             SortBooks();
                         }
                     }
