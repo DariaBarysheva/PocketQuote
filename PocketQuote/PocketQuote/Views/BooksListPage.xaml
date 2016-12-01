@@ -17,6 +17,10 @@
       <ListView.ItemTemplate>
         <DataTemplate>
           <ViewCell>
+            <ViewCell.ContextActions>
+              <MenuItem Text="Цитаты"/>
+              <MenuItem Text="Удалить" Command="{Binding ListViewModel.DeleteBookCommand}" CommandParameter="{Binding}"/>
+            </ViewCell.ContextActions>
             <ViewCell.View>
               <StackLayout Orientation="Horizontal">
                 <Label Text="{Binding Name}" FontSize="Medium" />
