@@ -7,10 +7,11 @@ namespace PocketQuote.Views
     public partial class BooksListPage : ContentPage
     {
         //Файл отделенного кода для BooksListPage.xaml. Установка контекста для формы со списком книг.
-        public BooksListPage()
+        //Входной параметр: идентификатор автора, если нужны книги конкретного автора
+        public BooksListPage(int writerId, string writerName)
         {
             InitializeComponent();
-            BindingContext = new BooksListViewModel() { Navigation = this.Navigation };
+            BindingContext = new BooksListViewModel(writerId, writerName) { Navigation = this.Navigation };
         }
     }
 }

@@ -32,6 +32,12 @@ namespace PocketQuote.ViewModels
             }
         }
 
+        //Идентификатор автора - соответствует идентификатору модели "Автор"
+        public int Id
+        {
+            get { return Writer.Id; }
+        }
+
         //Проверка того, что имя введено
         public bool IsValid
         {

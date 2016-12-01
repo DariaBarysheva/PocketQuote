@@ -9,7 +9,7 @@
         <DataTemplate>
           <ViewCell>
             <ViewCell.ContextActions>
-              <MenuItem Text="Книги"/>
+              <MenuItem Text="Книги" Command="{Binding ListViewModel.BooksCommand}" CommandParameter="{Binding}"/>
               <MenuItem Text="Цитаты"/>
               <MenuItem Text="Удалить" Command="{Binding ListViewModel.DeleteWriterCommand}" CommandParameter="{Binding}"/>
             </ViewCell.ContextActions>

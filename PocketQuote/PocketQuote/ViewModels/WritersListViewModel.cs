@@ -95,6 +95,7 @@ namespace PocketQuote.ViewModels
         public ICommand DeleteWriterCommand { protected set; get; }
         public ICommand SaveWriterCommand { protected set; get; }
         public ICommand BackCommand { protected set; get; }
+        public ICommand BooksCommand { protected set; get; }
 
         //Объект навигации, необходимый для команды BackCommand (передается при исходном создании 
         //объекта WritersListViewModel из WritersListPage)
@@ -114,6 +115,7 @@ namespace PocketQuote.ViewModels
             DeleteWriterCommand = new Command(DeleteWriter);
             SaveWriterCommand = new Command(SaveWriter);
             BackCommand = new Command(Back);
+            BooksCommand = new Command(BooksOfWriter);
         }
 
         //реализация интерфейса INotifyPropertyChanged
@@ -213,6 +215,16 @@ namespace PocketQuote.ViewModels
         private void Back()
         {
             Navigation.PopAsync();
+        }
+
+        //переход к книгам текущего автора
+        private void BooksOfWriter(object writerObject)
+        {
+            WriterViewModel writer = writerObject as WriterViewModel;
+            if (writer != null)
+            {
+                Navigation.PushAsync(new BooksListPage(writer.Id, writer.Name));
+            }
         }
     }
 }

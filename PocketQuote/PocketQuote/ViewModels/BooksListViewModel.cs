@@ -51,12 +51,15 @@ namespace PocketQuote.ViewModels
         public ICommand DeleteBookCommand { protected set; get; }
         public ICommand SaveBookCommand { protected set; get; }
         public ICommand BackCommand { protected set; get; }
+        private int Writer_id;
+        private string Writer_name;
 
         //Объект навигации, необходимый для команды BackCommand (передается при исходном создании 
         //объекта BooksListViewModel из BooksListPage)
         public INavigation Navigation { get; set; }
 
-        public BooksListViewModel()
+        //входные параметры: идентификатор автора, если следует показывать книги только одного автора
+        public BooksListViewModel(int writerId, string writerName)
         {
             //Устанавливаем соединение с БД - в звисимости от платформы путь будет отличаться, поэтому используем DependencyService
             string databasePath = DependencyService.Get<ISQLite>().GetDatabasePath(App.DATABASE_NAME);
@@ -64,8 +67,11 @@ namespace PocketQuote.ViewModels
             databaseConnection.CreateTable<Writer>();
             databaseConnection.CreateTable<Book>();
 
+            Writer_id = writerId;
+            Writer_name = writerName;
+
             //Загружаем содержимое списка книг на форме
-            UpdateBooks();
+            UpdateBooks(Writer_id);
 
             //Получаем авторов
             GetAllWriters();
@@ -85,7 +91,7 @@ namespace PocketQuote.ViewModels
         }
 
         //Обновление списка книг на форме - грузим таблицу с БД, упорядочиваем книг по имени автора и названию
-        private void UpdateBooks()
+        private void UpdateBooks(int writerId)
         {
             //UserDialogs.Instance.Loading("Loading", maskType:MaskType.Black);
 
@@ -96,7 +102,7 @@ namespace PocketQuote.ViewModels
                           join w in databaseConnection.Table<Writer>() on b.Writer_id equals w.Id
                           select new { Id = b.Id, Name = b.Name, Writer_id = b.Writer_id, Writer_name = w.Name}).OrderBy(el => el.Writer_name).ThenBy(el => el.Name);
                           */
-            foreach (Book b in databaseConnection.Query<Book>("SELECT Books.Id, Books.Name, Books.Writer_id, Writers.Name AS 'Writer_name' FROM Books INNER JOIN Writers ON Writers.id = Books.Writer_id"))
+            foreach (Book b in databaseConnection.Query<Book>("SELECT Books.Id, Books.Name, Books.Writer_id, Writers.Name AS 'Writer_name' FROM Books INNER JOIN Writers ON Writers.id = Books.Writer_id " + ((writerId != 0)? "AND Writers.id=" + writerId.ToString() : "")))
             {
                 BookViewModel temp = new BookViewModel() { Book = b, ListViewModel = this };
                 tempBooks.Add(temp);
@@ -124,7 +130,7 @@ namespace PocketQuote.ViewModels
         //Добавление книги после нажатия кнопки "Добавить" на форме BooksListPage
         private void CreateBook()
         {
-            Navigation.PushAsync(new BookPage(new BookViewModel() { ListViewModel = this, WritersList = listWriters }));
+            Navigation.PushAsync(new BookPage(new BookViewModel() { Book = new Book() { Writer_id = Writer_id, Writer_name = Writer_name }, ListViewModel = this, WritersList = listWriters }));
         }
 
         //Сохранение изменений в информации о книге - после выбора книги в списке на форме BooksListPage, 
