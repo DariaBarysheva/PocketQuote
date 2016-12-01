@@ -10,7 +10,6 @@
     <Entry Text="{Binding Name}" />
     <StackLayout Orientation="Horizontal">
       <Button Text="Сохранить" Command="{Binding ListViewModel.SaveBookCommand}" CommandParameter="{Binding}" />
-      <Button Text="Удалить" Command="{Binding ListViewModel.DeleteBookCommand}" CommandParameter="{Binding}" />
       <Button Text="Отмена" Command="{Binding Path=ListViewModel.BackCommand}" />
     </StackLayout>
   </StackLayout>

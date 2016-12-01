@@ -182,7 +182,7 @@ namespace PocketQuote.ViewModels
                         }
                     }
                 }
-                Back(); //Возврат на исходную страницу       
+                //Back(); //Возврат на исходную страницу       
             }     
         }
 
