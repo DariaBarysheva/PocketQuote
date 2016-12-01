@@ -178,11 +178,14 @@ namespace PocketQuote.ViewModels
 
         //Удаление автора - после выбора автора в списке на форме WritersListPage, 
         //и нажатия "Удалить" на форме WritersPage
-        private void DeleteWriter(object writerObject)
+        private async void DeleteWriter(object writerObject)
         {
-            WriterViewModel writer = writerObject as WriterViewModel;
-            if (writer != null)
+            var answer = await App.Current.MainPage.DisplayAlert("Предупреждение", "Данную операцию нельзя будет отменить. Подтверждаете удаление?", "Да", "Нет");
+            if (answer)
             {
+                WriterViewModel writer = writerObject as WriterViewModel;
+                if (writer != null)
+                {
                     if (databaseConnection.Delete<Writer>(writer.Writer.Id) == 1) //Если удалили в БД - удаляем в списке
                     {
                         WriterViewModel deletedWriter = Writers.FirstOrDefault(w => w.Writer.Id == writer.Writer.Id); /*(from w in Writers
@@ -193,9 +196,10 @@ namespace PocketQuote.ViewModels
                             Writers.Remove(deletedWriter);
                         }
                     }
-             }
-             //UpdateWriters(); //Обновляем список на форме - пока так
-             Back(); //Возврат на исходную страницу                      
+                }
+                //UpdateWriters(); //Обновляем список на форме - пока так
+                Back(); //Возврат на исходную страницу  
+            }                    
         }
 
         //сортировка списка авторов по ФИО (после добавления и изменения отдельных записей)

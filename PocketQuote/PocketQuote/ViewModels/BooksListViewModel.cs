@@ -8,18 +8,18 @@ using SQLite;
 using Xamarin.Forms;
 using PocketQuote.Views;
 using PocketQuote.Models;
+//using Acr.UserDialogs;
 
 
 namespace PocketQuote.ViewModels
 {
     //Класс, описывающий логику работу с таблицей "Книга" (Books) в БД
-
     public class BooksListViewModel : INotifyPropertyChanged
     {
         //Соединение с БД
         private SQLiteConnection databaseConnection;
 
-        //Список книг
+        //Список книг, полученный из БД
         ObservableCollection<BookViewModel> tempBooks { get; set; }
         //Список книг с группировкой по автору
         public ObservableCollection<Grouping<int, BookViewModel>> Books { get; set; }
@@ -81,6 +81,8 @@ namespace PocketQuote.ViewModels
         //Обновление списка книг на форме - грузим таблицу с БД, упорядочиваем книг по имени автора и названию
         private void UpdateBooks()
         {
+            //UserDialogs.Instance.Loading("Loading", maskType:MaskType.Black);
+
             tempBooks = new ObservableCollection<BookViewModel>();
 
             /* Сейчас JOIN в LINQ для SqlLite не поддерживается
@@ -96,6 +98,8 @@ namespace PocketQuote.ViewModels
 
             var groups = tempBooks.OrderBy(b => b.Writer_name).ThenBy(b => b.Name).GroupBy(b => b.Writer_id).Select(g => new Grouping<int, BookViewModel>(g.Key, g, g.ToList()[0].Book.Writer_name));
             Books = new ObservableCollection<Grouping<int, BookViewModel>>(groups);
+
+           // UserDialogs.Instance.HideLoading();
         }
 
         //Добавление книги после нажатия кнопки "Добавить" на форме BooksListPage
@@ -138,22 +142,27 @@ namespace PocketQuote.ViewModels
 
         //Удаление книги - после выбора книги в списке на форме BooksListPage, 
         //и нажатия "Удалить" на форме BookPage
-        private void DeleteBook(object bookObject)
+        private async void DeleteBook(object bookObject)
         {
-            BookViewModel book = bookObject as BookViewModel;
-            if (book != null)
+            var answer = await App.Current.MainPage.DisplayAlert("Предупреждение", "Данную операцию нельзя будет отменить. Подтверждаете удаление?", "Да", "Нет");
+            if (answer)
             {
-                if (databaseConnection.Delete<Book>(book.Book.Id) == 1) //Если удалили в БД - удаляем в списке
+
+                BookViewModel book = bookObject as BookViewModel;
+                if (book != null)
                 {
-                    BookViewModel deletedBook = tempBooks.FirstOrDefault(b => b.Book.Id == book.Book.Id);
-                    if (deletedBook != null)
+                    if (databaseConnection.Delete<Book>(book.Book.Id) == 1) //Если удалили в БД - удаляем в списке
                     {
-                        tempBooks.Remove(deletedBook);
-                        SortBooks();
+                        BookViewModel deletedBook = tempBooks.FirstOrDefault(b => b.Book.Id == book.Book.Id);
+                        if (deletedBook != null)
+                        {
+                            tempBooks.Remove(deletedBook);
+                            SortBooks();
+                        }
                     }
                 }
-            }
-            Back(); //Возврат на исходную страницу            
+                Back(); //Возврат на исходную страницу       
+            }     
         }
 
         //сортировка списка книг по ФИО автора и названию книги (после добавления и изменения отдельных записей)
